@@ -3,6 +3,7 @@
 <button class="ui pink basic button" v-on:click="click()">WISH</button>
 <button class="ui pink basic button" v-on:click="click1()">W</button>
 <button class="ui pink basic button" v-on:click="click3()">GET</button>
+<p>jam</p>
 </div>
 </template>
 
