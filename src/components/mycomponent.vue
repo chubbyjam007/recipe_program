@@ -33,16 +33,16 @@
             </div>
         </div>
         <!--Modal-->
-        <button id="show-modal" @click="showModal = true">Fillter</button>
+        <!--<button id="show-modal" @click="showModal = true">Fillter</button>-->
             <!-- use the modal component, pass in the prop -->
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!--Show ingredient-->
         <!--<h1>{{ingredient}}</h1>-->
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!--check is empty-->
-        <p>{{wish}}</p>
-        <p>{{this.list}}</p>
-        <ul><button class="ui inverted orange button" v-on:click="gotoList()">Wish List</button></ul>
+        <!--{{wish}}
+        {{this.list}}-->
+        <!--<ul><button class="ui inverted orange button" v-on:click="gotoList()">Wish List</button></ul>-->
         <div v-if="info.data.matches==0">
             {{empty()}}
             <!--{{gotoMatch(splitingredient)}}-->
@@ -91,6 +91,31 @@
             </ul>
             </div>
         </modal>
+        <!--Menu-->
+        <div class="ui vertical menu">
+            <div class="item">
+                <div class="header">Fillter & Nutrition unit</div>
+                <div class="menu">
+                    <a class="item" id="show-modal" @click="showModal = true">Fillter</a>
+                </div>
+            </div>
+            <div class="item">
+                <div class="header">Sort by</div>
+                <div class="menu">
+                    <a class="item">Shared</a>
+                    <a class="item">Dedicated</a>
+                </div>
+            </div>
+            <div class="item">
+                <div class="header">Compare</div>
+                <div class="menu">
+                    <a class="item" v-on:click="gotoList()">compare</a>
+                </div>
+            </div>
+            {{wish}}
+            {{this.list}}
+        </div>
+        <!--show menu-->
         <div v-if="info.data.matches!=0">
             <div class='row'>
                 <div v-for="menu of info.data.matches" v-bind:key= menu.id>
@@ -316,7 +341,8 @@ Vue.use(VueAxios, axios)
                     { text: "less than 1 hour", value: 3600 },
                 ],
                 wish:[],
-                list:""
+                list:"",
+                lastList:""
             }
         },
         created (){
@@ -397,6 +423,7 @@ Vue.use(VueAxios, axios)
                     }
                     this.list="";
                     this.wish=[];
+                    this.lastList="";
                 }
                 else if(this.wish.length>1 && this.wish.length>2){
                     let routeData = this.$router.resolve({name:'List', params:  {l:this.list}});
@@ -406,8 +433,10 @@ Vue.use(VueAxios, axios)
                         console.log(this.wish[i]);
                         this.dis[this.wish[i]]= false;
                     }
+                    this.dis[this.lastList]= false;
                     this.list="";
                     this.wish=[];
+                    this.lastList="";
                 }
             },
             wishList:function(a){
@@ -417,8 +446,11 @@ Vue.use(VueAxios, axios)
                     this.list = this.wish.join(",");
                     // console.log(this.wish);
                 }
-                else{
+                else
+                {
                     alert("Wish List is full");
+                    this.lastList = a;
+
                 }
             },
             saveCookies:function(){
