@@ -131,7 +131,7 @@
                                     <!--<div class="header">{{menu.recipeName}}</div>-->
                                     <div class="header">{{menu.recipeName.substring(0,20)+"..."}}</div>
                                         <div class="meta">
-                                            <a>{{menu.rating}}</a>
+                                            <a>Rating : {{menu.rating}}</a>
                                         </div>
                                         <div class="description">
                                             {{menu.totalTimeInSeconds}}
