@@ -102,7 +102,7 @@
             <div class="item">
                 <div class="header">Sort by</div>
                 <div class="menu">
-                    <a class="item">Shared</a>
+                    <a class="item" v-on:click="sortTime()">Cooking Time</a>
                     <a class="item">Dedicated</a>
                 </div>
             </div>
@@ -117,35 +117,79 @@
         </div>
         <!--show menu-->
         <div v-if="info.data.matches!=0">
-            <div class='row'>
-                <div v-for="menu of info.data.matches" v-bind:key= menu.id>
-                    <div class='column'>
-                        <div class="ui link cards">
-                            <div class="card">
-                                <div class="image">
-                                    <div class="image" v-on:click="gotoDetail(menu.id)">
+            <div v-if="sort_time==false">
+                <div class='row'>
+                    <div v-for="menu of info.data.matches" v-bind:key= menu.id>
+                        <div class='column'>
+                            <div class="ui link cards">
+                                <div class="card">
+                                    <div class="image">
+                                        <div class="image" v-on:click="gotoDetail(menu.id)">
                                             <img class='image' :src='picture(menu.imageUrlsBySize["90"])' style="width:100%"/>
+                                        </div>
+                                    </div>
+                                    <div class="content">
+                                        <!--<div class="header">{{menu.recipeName}}</div>-->
+                                        <div class="header">{{menu.recipeName.substring(0,20)+"..."}}</div>
+                                        <div class="meta">
+                                            <a>Rating : {{menu.rating}}+jam</a>
+                                        </div>
+                                        <div class="description">
+                                            <div v-if="menu.totalTimeInSeconds<3600">
+                                                cooking time :  {{Math.floor(menu.totalTimeInSeconds/60)}} minutes
+                                            </div>
+                                            <div v-if="menu.totalTimeInSeconds>=3600">
+                                                cooking time :  {{Math.floor(menu.totalTimeInSeconds/3600)}} hours
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="extra content">
+                                        <span class="right floated">
+                                            <button class="ui inverted orange button" :disabled="dis[menu.id]===true" v-on:click="wishList(menu.id);dis[menu.id]=true">WISH</button>
+                                            <!--<button class="ui pink basic button" :disabled="dis[menu.id]===true" v-on:click="wishList(menu.id);dis[menu.id]=true">WISH</button>-->
+                                        </span>
                                     </div>
                                 </div>
-                                <div class="content">
-                                    <!--<div class="header">{{menu.recipeName}}</div>-->
-                                    <div class="header">{{menu.recipeName.substring(0,20)+"..."}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-if="sort_time==true">
+                <div class='row'>
+                    <div v-for="menu in sortedMenu" v-bind:key= menu.id>
+                        <div class='column'>
+                            <div class="ui link cards">
+                                <div class="card">
+                                    <div class="image">
+                                        <div class="image" v-on:click="gotoDetail(menu.id)">
+                                            <img class='image' :src='picture(menu.imageUrlsBySize["90"])' style="width:100%"/>
+                                        </div>
+                                    </div>
+                                    <div class="content">
+                                        <!--<div class="header">{{menu.recipeName}}</div>-->
+                                        <div class="header">{{menu.recipeName.substring(0,20)+"..."}}</div>
                                         <div class="meta">
                                             <a>Rating : {{menu.rating}}</a>
                                         </div>
                                         <div class="description">
-                                            {{menu.totalTimeInSeconds}}
+                                            <div v-if="menu.totalTimeInSeconds<3600">
+                                                cooking time :  {{Math.floor(menu.totalTimeInSeconds/60)}} minutes
+                                            </div>
+                                            <div v-if="menu.totalTimeInSeconds>=3600">
+                                                cooking time :  {{Math.floor(menu.totalTimeInSeconds/3600)}} hours
+                                            </div>
                                         </div>
-                                </div>
-                                <div class="extra content">
-                                    <span class="right floated">
-                                        <button class="ui inverted orange button" :disabled="dis[menu.id]===true" v-on:click="wishList(menu.id);dis[menu.id]=true">WISH</button>
-                                        <!--<button class="ui pink basic button" :disabled="dis[menu.id]===true" v-on:click="wishList(menu.id);dis[menu.id]=true">WISH</button>-->
-                                    </span>
+                                    </div>
+                                    <div class="extra content">
+                                        <span class="right floated">
+                                            <button class="ui inverted orange button" :disabled="dis[menu.id]===true" v-on:click="wishList(menu.id);dis[menu.id]=true">WISH</button>
+                                            <!--<button class="ui pink basic button" :disabled="dis[menu.id]===true" v-on:click="wishList(menu.id);dis[menu.id]=true">WISH</button>-->
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <!--<p><br><br><br><br><br><br></p>-->
                     </div>
                 </div>
             </div>
@@ -161,7 +205,7 @@
     box-sizing: border-box;
 }
 .column {
-    float: right;
+    float: left;
     width: 25%;
     padding: 10px;
 }
@@ -273,11 +317,13 @@ Vue.use(VueAxios, axios)
         name: 'mycomponent',
         data () {
             return {
+                sort_time:false,
                 cookies_status:false,
                 showModal: false,
                 dis:{},
                 disabled: false,
                 info: [],
+                info_2: [],
                 a:[],
                 ingredient :[],
                 splitingredient:[],
@@ -348,14 +394,27 @@ Vue.use(VueAxios, axios)
         created (){
             //this.fetchData(this.ingredient)
             axios
-                .get('http://api.yummly.com/v1/api/recipes?_app_id=b4c8cd6d&_app_key=28dbb92e37821d78714d98ca2e442545&q='+'onion+soup'+'&maxResult=40&start=1'
+                .get('http://api.yummly.com/v1/api/recipes?_app_id=b4c8cd6d&_app_key=28dbb92e37821d78714d98ca2e442545&q='+'onion+soup'+'&maxResult=8&start=1'
                 )
                 .then(response => {(this.info = response)}) 
                 .catch((err) => {
                     console.log(err)
                 })
             this.checkCookies();
+            console.log(this.sort_time);
 
+        },
+        computed: {
+            sortedMenu: function() {
+                function compare(a, b) {
+                    if (a.totalTimeInSeconds < b.totalTimeInSeconds)
+                        return -1;
+                    if (a.totalTimeInSeconds > b.totalTimeInSeconds)
+                        return 1;
+                return 0;
+                }
+            return this.info.data.matches.sort(compare);
+            }
         },
         methods:{
             picture:function(urlImg){
@@ -375,13 +434,17 @@ Vue.use(VueAxios, axios)
                 +'&nutrition.FIBTG.min='+this.fiber_min+'&nutrition.FIBTG.max='+this.fiber_max
                 +'&nutrition.PROCNT.min='+this.protein_min+'&nutrition.PROCNT.max='+this.protein_max
                 +'&nutrition.NA.min='+this.sodium_min+'&nutrition.NA.max='+this.sodium_max
-                +'&maxResult=40&start=1'
+                +'&maxResult=8&start=1'
                 )
                 .then(response => {(this.info = response)}) 
                 .catch((err) => {
                 console.log(err)
                 })
+                console.log(this.sort_time);
+                //this.info_2=this.info;
+                //this.sort_time=!this.sort_time;
                 console.log(this.info.data.matches);
+                //console.log(this.info_2.data.matches);
                 //this.fetchData(this.info.data.matches)
             },
             empty:function(event){
@@ -522,6 +585,9 @@ Vue.use(VueAxios, axios)
                         this.sodium_min=this.$cookie.get('sodium_min');
                     }
                 }
+            },
+            sortTime:function(){
+                this.sort_time=!this.sort_time;
             }
         }
     }
