@@ -103,9 +103,7 @@
                 <div class="header">Sort by</div>
                 <div class="menu">
                     <a class="item" v-on:click="sortTime()">Cooking Time</a>
-                    <a class="item"><input type="checkbox" v-on:click="sortTime()"> Cooking Time</a>
-                    <a class="item"><input type="checkbox" v-on:click="sortRating()"> Rating</a>
-                    <a class="item">Dedicated</a>
+                    <a class="item" v-on:click="sortRating()"> Rating</a>
                 </div>
             </div>
             <div class="item">
@@ -174,7 +172,7 @@
                                         <!--<div class="header">{{menu.recipeName}}</div>-->
                                         <div class="header">{{menu.recipeName.substring(0,20)+"..."}}</div>
                                         <div class="meta">
-                                            <a>Rating : {{menu.rating}}+aaaaa</a>
+                                            <a>Rating : {{menu.rating}}</a>
                                         </div>
                                         <div class="description">
                                             <div v-if="menu.totalTimeInSeconds<3600">
@@ -212,7 +210,7 @@
                                         <!--<div class="header">{{menu.recipeName}}</div>-->
                                         <div class="header">{{menu.recipeName.substring(0,20)+"..."}}</div>
                                         <div class="meta">
-                                            <a>Rating : {{menu.rating}}+jam</a>
+                                            <a>Rating : {{menu.rating}}</a>
                                         </div>
                                         <div class="description">
                                             <div v-if="menu.totalTimeInSeconds<3600">
@@ -249,7 +247,7 @@
 .column {
     float: left;
     width: 25%;
-    padding: 10px;
+    padding: 3%;
 }
 
 /* Clearfix (clear floats) */
@@ -627,9 +625,11 @@ Vue.use(VueAxios, axios)
             },
             sortTime:function(){
                 this.sort_time=!this.sort_time;
+                this.sort_rating=false;
             },
             sortRating:function(){
                 this.sort_rating=!this.sort_rating;
+                this.sort_time=false;
             }
         }
     }
