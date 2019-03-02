@@ -103,6 +103,8 @@
                 <div class="header">Sort by</div>
                 <div class="menu">
                     <a class="item" v-on:click="sortTime()">Cooking Time</a>
+                    <a class="item"><input type="checkbox" v-on:click="sortTime()"> Cooking Time</a>
+                    <a class="item"><input type="checkbox" v-on:click="sortRating()"> Rating</a>
                     <a class="item">Dedicated</a>
                 </div>
             </div>
@@ -114,12 +116,14 @@
             </div>
             {{wish}}
             {{this.list}}
+            {{info_2=info}}
+            {{info_3=info}}
         </div>
         <!--show menu-->
         <div v-if="info.data.matches!=0">
-            <div v-if="sort_time==false">
+            <div v-if="sort_time==true && sort_rating==false">
                 <div class='row'>
-                    <div v-for="menu of info.data.matches" v-bind:key= menu.id>
+                    <div v-for="menu in sortedTime(info_2.data.matches)" v-bind:key= menu.id>
                         <div class='column'>
                             <div class="ui link cards">
                                 <div class="card">
@@ -132,7 +136,7 @@
                                         <!--<div class="header">{{menu.recipeName}}</div>-->
                                         <div class="header">{{menu.recipeName.substring(0,20)+"..."}}</div>
                                         <div class="meta">
-                                            <a>Rating : {{menu.rating}}+jam</a>
+                                            <a>Rating : {{menu.rating}}</a>
                                         </div>
                                         <div class="description">
                                             <div v-if="menu.totalTimeInSeconds<3600">
@@ -155,9 +159,9 @@
                     </div>
                 </div>
             </div>
-            <div v-if="sort_time==true">
+            <div v-if="sort_time==false && sort_rating==true">
                 <div class='row'>
-                    <div v-for="menu in sortedMenu" v-bind:key= menu.id>
+                    <div v-for="menu in sortedRating(info_3.data.matches)" v-bind:key= menu.id>
                         <div class='column'>
                             <div class="ui link cards">
                                 <div class="card">
@@ -170,7 +174,45 @@
                                         <!--<div class="header">{{menu.recipeName}}</div>-->
                                         <div class="header">{{menu.recipeName.substring(0,20)+"..."}}</div>
                                         <div class="meta">
-                                            <a>Rating : {{menu.rating}}</a>
+                                            <a>Rating : {{menu.rating}}+aaaaa</a>
+                                        </div>
+                                        <div class="description">
+                                            <div v-if="menu.totalTimeInSeconds<3600">
+                                                cooking time :  {{Math.floor(menu.totalTimeInSeconds/60)}} minutes
+                                            </div>
+                                            <div v-if="menu.totalTimeInSeconds>=3600">
+                                                cooking time :  {{Math.floor(menu.totalTimeInSeconds/3600)}} hours
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="extra content">
+                                        <span class="right floated">
+                                            <button class="ui inverted orange button" :disabled="dis[menu.id]===true" v-on:click="wishList(menu.id);dis[menu.id]=true">WISH</button>
+                                            <!--<button class="ui pink basic button" :disabled="dis[menu.id]===true" v-on:click="wishList(menu.id);dis[menu.id]=true">WISH</button>-->
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-if="sort_time==false && sort_rating==false">
+                <div class='row'>
+                    <div v-for="menu of info.data.matches" v-bind:key= menu.id>
+                        <div class='column'>
+                            <div class="ui link cards">
+                                <div class="card">
+                                    <div class="image">
+                                        <div class="image" v-on:click="gotoDetail(menu.id)">
+                                            <img class='image' :src='picture(menu.imageUrlsBySize["90"])' style="width:100%"/>
+                                        </div>
+                                    </div>
+                                    <div class="content">
+                                        <!--<div class="header">{{menu.recipeName}}</div>-->
+                                        <div class="header">{{menu.recipeName.substring(0,20)+"..."}}</div>
+                                        <div class="meta">
+                                            <a>Rating : {{menu.rating}}+jam</a>
                                         </div>
                                         <div class="description">
                                             <div v-if="menu.totalTimeInSeconds<3600">
@@ -318,6 +360,7 @@ Vue.use(VueAxios, axios)
         data () {
             return {
                 sort_time:false,
+                sort_rating:false,
                 cookies_status:false,
                 showModal: false,
                 dis:{},
@@ -401,22 +444,18 @@ Vue.use(VueAxios, axios)
                     console.log(err)
                 })
             this.checkCookies();
-            console.log(this.sort_time);
-
-        },
-        computed: {
-            sortedMenu: function() {
-                function compare(a, b) {
-                    if (a.totalTimeInSeconds < b.totalTimeInSeconds)
-                        return -1;
-                    if (a.totalTimeInSeconds > b.totalTimeInSeconds)
-                        return 1;
-                return 0;
-                }
-            return this.info.data.matches.sort(compare);
-            }
         },
         methods:{
+            sortedTime: function(arr) {
+                return arr.slice().sort(function(a, b) {
+                return a.totalTimeInSeconds - b.totalTimeInSeconds;
+                });
+            },
+            sortedRating: function(arr) {
+                return arr.slice().sort(function(a, b) {
+                return b.rating - a.rating;
+                });
+            },
             picture:function(urlImg){
                 var res = urlImg.replace('90', '250');
                 return res
@@ -436,14 +475,15 @@ Vue.use(VueAxios, axios)
                 +'&nutrition.NA.min='+this.sodium_min+'&nutrition.NA.max='+this.sodium_max
                 +'&maxResult=8&start=1'
                 )
-                .then(response => {(this.info = response)}) 
+                .then(response => {(this.info = response);
+                console.log(this.info_2.data.matches);
+                console.log("...");
+                console.log(this.info.data.matches);}) 
                 .catch((err) => {
                 console.log(err)
                 })
-                console.log(this.sort_time);
-                //this.info_2=this.info;
+                console.log("info2");
                 //this.sort_time=!this.sort_time;
-                console.log(this.info.data.matches);
                 //console.log(this.info_2.data.matches);
                 //this.fetchData(this.info.data.matches)
             },
@@ -513,7 +553,6 @@ Vue.use(VueAxios, axios)
                 {
                     alert("Wish List is full");
                     this.lastList = a;
-
                 }
             },
             saveCookies:function(){
@@ -588,6 +627,9 @@ Vue.use(VueAxios, axios)
             },
             sortTime:function(){
                 this.sort_time=!this.sort_time;
+            },
+            sortRating:function(){
+                this.sort_rating=!this.sort_rating;
             }
         }
     }
