@@ -11,7 +11,7 @@
         </div>
         </ul>
         <!--show time for preparation-->
-        <h1>Time for preparation</h1>
+        <h1>Cooking Time</h1>
         <ul>{{info.data.totalTime}}<br/></ul>
         <!--Show ingredient-->
         <h1>Ingredient</h1>

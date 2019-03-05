@@ -461,8 +461,7 @@ Vue.use(VueAxios, axios)
             fetchData:function(ingredient){
                 axios
                 .get('http://api.yummly.com/v1/api/recipes?_app_id=b4c8cd6d&_app_key=28dbb92e37821d78714d98ca2e442545&q='+ingredient
-                +'&allowedCuisine[]=cuisine^cuisine-'+this.selectedCuisine
-                +'&maxTotalTimeInSeconds='+this.selectedTime
+                +'&allowedCuisine[]=cuisine^cuisine-'+this.selectedCuisine+'&maxTotalTimeInSeconds='+this.selectedTime
                 +'&nutrition.SUGAR.min='+this.sugar_min+'&nutrition.SUGAR.max='+this.sugar_max
                 +'&nutrition.ENERC_KCAL.min='+this.energy_min+'&nutrition.ENERC_KCAL.max='+this.energy_max
                 +'&nutrition.CHOCDF.min='+this.carb_min+'&nutrition.CHOCDF.max='+this.carb_max
@@ -471,7 +470,7 @@ Vue.use(VueAxios, axios)
                 +'&nutrition.FIBTG.min='+this.fiber_min+'&nutrition.FIBTG.max='+this.fiber_max
                 +'&nutrition.PROCNT.min='+this.protein_min+'&nutrition.PROCNT.max='+this.protein_max
                 +'&nutrition.NA.min='+this.sodium_min+'&nutrition.NA.max='+this.sodium_max
-                +'&maxResult=8&start=1'
+                +'&maxResult=32&start=1'
                 )
                 .then(response => {(this.info = response);
                 console.log(this.info_2.data.matches);
