@@ -1,19 +1,33 @@
 <template>
     <div>
-        <!--<h1>{{ingredients}}</h1>-->
-        <!--<p>{{info.data.matches}}</p>-->
-        <h1>Match Ingredient</h1>
-        <ul>
-            <div v-for="t in ingredients"  v-bind:key= t>
-                <input type="checkbox" :value="t" id="index" v-model="select" v-on:click="selectIngredient()">{{t}}
+        <div class="ui inverted segment">
+            <div class="ui inverted left icon input">
+                <h1><font color="white"><center>Match Your Ingredients</center></font></h1>
             </div>
-        </ul>
-        <!--<h1>{{select}}</h1>-->
-        <br>
+        </div>
+        <div class="sidebar">
+        <div class="ui vertical menu">
+            <div class="item">
+                <div class="header">Compare</div>
+                <div class="menu">
+                    <a class="item" v-on:click="gotoList()">compare</a>
+                </div>
+            </div>
+            {{wish}}
+            {{this.list}}
+            <div class="item">
+                <div class="header">Match Ingredients</div>
+                <div class="menu">
+                    <div v-for="t in ingredients"  v-bind:key= t>
+                        <ul><input type="checkbox" :value="t" id="index" v-model="select">      {{t}}</ul>
+                    </div>
+                    <ul><button class="ui inverted orange button" v-on:click="selectIngredient()">CHECK</button></ul>
+                </div>
+            </div>
+        </div>
+        </div>
         <div v-if="info.data.matches==0">
-            <!--{{empty()}}-->
-            <h1>Not found</h1>
-            <!--{{gotoMatch(splitingredient)}}-->
+            {{empty()}}
         </div>
         <div v-if="info.data.matches!=0">
             <div class='row'>
@@ -27,19 +41,25 @@
                                     </div>
                                 </div>
                                 <div class="content">
-                                    <!--<div class="header">{{menu.recipeName}}</div>-->
-                                    <div class="header">{{menu.recipeName.substring(0,25)+"..."}}</div>
+                                        <!--<div class="header">{{menu.recipeName}}</div>-->
+                                        <div class="header">{{menu.recipeName.substring(0,20)+"..."}}</div>
                                         <div class="meta">
-                                            <a>{{menu.rating}}</a>
+                                            <a>Rating : {{menu.rating}}</a>
                                         </div>
                                         <div class="description">
-                                            {{menu.totalTimeInSeconds}}
+                                            <div v-if="menu.totalTimeInSeconds<3600">
+                                                cooking time :  {{Math.floor(menu.totalTimeInSeconds/60)}} minutes
+                                            </div>
+                                            <div v-if="menu.totalTimeInSeconds>=3600">
+                                                cooking time :  {{Math.floor(menu.totalTimeInSeconds/3600)}} hours
+                                            </div>
                                         </div>
-                                </div>
+                                    </div>
                                 <div class="extra content">
-                                    <span class="right floated">
-                                        <button class="ui pink basic button" v-on:click="wishList(menu.id)">WISH</button>
-                                    </span>
+                                        <span class="right floated">
+                                            <button class="ui pink basic button" :disabled="dis[menu.id]===true" v-on:click="wishList(menu.id); dis[menu.id]=true">WISH</button>
+                                            <!--<button class="ui pink basic button" :disabled="dis[menu.id]===true" v-on:click="wishList(menu.id);dis[menu.id]=true">WISH</button>-->
+                                        </span>
                                 </div>
                             </div>
                         </div>
@@ -51,15 +71,20 @@
     </div>
 </template>
 <style>
-.image{
+.text {
+    text-align: center;
+}
+.image {
 }
 * {
     box-sizing: border-box;
 }
 .column {
-    float: right;
-    width: 25%;
-    padding: 10px;
+    float:left;
+    width: 28%;
+    padding-left:3%;
+    padding-bottom: 3%;
+    display:flex;
 }
 
 /* Clearfix (clear floats) */
@@ -91,7 +116,12 @@ Vue.use(VueAxios, axios)
                 info:[],
                 checkedNames: [],
                 select:[],
-                search:[]
+                search:[],
+                dis:{},
+                disabled: false,
+                wish:[],
+                list:"",
+                lastList:""
             }
         },
         created(){
@@ -102,7 +132,7 @@ Vue.use(VueAxios, axios)
         methods:{
             fetchData:function(){
                 axios
-                .get('http://api.yummly.com/v1/api/recipes?_app_id=b4c8cd6d&_app_key=28dbb92e37821d78714d98ca2e442545&q='+this.search+'&maxResult=32&start=10')
+                .get('http://api.yummly.com/v1/api/recipes?_app_id=b4c8cd6d&_app_key=28dbb92e37821d78714d98ca2e442545&q='+this.search+'&maxResult=33&start=10')
                 .then(response => {(this.info = response)}) 
                 .catch((err) => {
                 console.log(err)
@@ -118,10 +148,54 @@ Vue.use(VueAxios, axios)
             },
             selectIngredient: function() {
                 this.search = this.select.join('+');
-                console.log(this.search);
+                console.log(this.select);
                 this.fetchData();
+            },
+            empty:function(){
+                alert('Sorry we not found match ingredient');
+            },
+            gotoList:function(){
+                //console.log(this.list);
+                //this.$router.push({ name: 'List', params: {list:l}});
+                if(this.wish.length>1 && this.wish.length==2){
+                    let routeData = this.$router.resolve({name:'TwoList', params:  {lt:this.list}});
+                    window.open(routeData.href, '_blank');
+                    var count =this.wish.length
+                    for(var i = 0; i < count; i++){
+                        console.log(this.wish[i]);
+                        this.dis[this.wish[i]]= false;
+                    }
+                    this.list="";
+                    this.wish=[];
+                    this.lastList="";
+                }
+                else if(this.wish.length>1 && this.wish.length>2){
+                    let routeData = this.$router.resolve({name:'List', params:  {l:this.list}});
+                    window.open(routeData.href, '_blank');
+                    var count =this.wish.length
+                    for(var i = 0; i < count; i++){
+                        console.log(this.wish[i]);
+                        this.dis[this.wish[i]]= false;
+                    }
+                    this.dis[this.lastList]= false;
+                    this.list="";
+                    this.wish=[];
+                    this.lastList="";
+                }
+            },
+            wishList:function(a){
+                //console.log(this.dis[a]);
+                if(this.wish.length<3){
+                    this.wish.push(a);
+                    this.list = this.wish.join(",");
+                    // console.log(this.wish);
+                }
+                else
+                {
+                    alert("Wish List is full");
+                    this.lastList = a;
+                }
             }
-            
         }
     }
 </script>

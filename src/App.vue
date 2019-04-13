@@ -8,7 +8,7 @@
 <script>
 // eslint-disable-next-line
 /* eslint-disable */
-import HelloWorld from './components/HelloWorld'
+/*import HelloWorld from './components/HelloWorld'*/
 import mycomponent from './components/mycomponent'
 export default {
   name: 'App',

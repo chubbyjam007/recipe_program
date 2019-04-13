@@ -27,7 +27,7 @@
             </transition>
         </script>
         <div class="ui inverted segment">
-            <div class="ui inverted left icon input">
+            <div class="ui inverted left icon input" style="width:40%">
                 <input v-model="ingredient" v-on:keyup.enter="split()">
                 <i class="search icon"></i>
             </div>
@@ -73,25 +73,28 @@
             <ul>
                 <div>
                 <p class="description">Nutrition units</p>
-                <p class="description1">Carbohydrate:</p><input v-model="carb_min" placeholder="minimum"> <input v-model="carb_max" placeholder="maximum">
-                <p class="description1">Cholesterrol:</p><input v-model="choles_min" placeholder="minimum"> <input v-model="choles_max" placeholder="maximum">
-                <p class="description1">Sugar:</p><input v-model="sugar_min" placeholder="minimum"> <input v-model="sugar_max" placeholder="maximum">
-                <p class="description1">Energy:</p><input v-model="energy_min" placeholder="minimum"> <input v-model="energy_max" placeholder="maximum">
-                <p class="description1">Fat:</p><input v-model="fat_min" placeholder="minimum"> <input v-model="fat_max" placeholder="maximum">
-                <p class="description1">Fiber:</p><input v-model="fiber_min" placeholder="minimum"> <input v-model="fiber_max" placeholder="maximum">
-                <p class="description1">Protein:</p><input v-model="protein_min" placeholder="minimum"> <input v-model="protein_max" placeholder="maximum">
-                <p class="description1">Sodium:</p><input v-model="sodium_min" placeholder="minimum"> <input v-model="sodium_max" placeholder="maximum">
+                <p class="description1">Carbohydrate(gram):</p><input v-model="carb_min" placeholder="minimum"> <input v-model="carb_max" placeholder="maximum">
+                <p class="description1">Cholesterrol(gram):</p><input v-model="choles_min" placeholder="minimum"> <input v-model="choles_max" placeholder="maximum">
+                <p class="description1">Sugar(gram):</p><input v-model="sugar_min" placeholder="minimum"> <input v-model="sugar_max" placeholder="maximum">
+                <p class="description1">Energy(kilo calories):</p><input v-model="energy_min" placeholder="minimum"> <input v-model="energy_max" placeholder="maximum">
+                <p class="description1">Fat(gram):</p><input v-model="fat_min" placeholder="minimum"> <input v-model="fat_max" placeholder="maximum">
+                <p class="description1">Fiber(gram):</p><input v-model="fiber_min" placeholder="minimum"> <input v-model="fiber_max" placeholder="maximum">
+                <p class="description1">Protein(gram):</p><input v-model="protein_min" placeholder="minimum"> <input v-model="protein_max" placeholder="maximum">
+                <p class="description1">Sodium(gram):</p><input v-model="sodium_min" placeholder="minimum"> <input v-model="sodium_max" placeholder="maximum">
                 <br/><br/>
                 </div>
-                <ul><div class="blue ui buttons">
+                <ul><ul><ul>
+                <div class="blue ui buttons">
                     <button class="ui button active" v-on:click="saveCookies()">
                         SAVE
                     </button>
-                </div></ul>
+                </div>
+                </ul></ul></ul>
             </ul>
             </div>
         </modal>
         <!--Menu-->
+        <div class="sidebar">
         <div class="ui vertical menu">
             <div class="item">
                 <div class="header">Fillter & Nutrition unit</div>
@@ -116,6 +119,7 @@
             {{this.list}}
             {{info_2=info}}
             {{info_3=info}}
+        </div>
         </div>
         <!--show menu-->
         <div v-if="info.data.matches!=0">
@@ -223,7 +227,7 @@
                                     </div>
                                     <div class="extra content">
                                         <span class="right floated">
-                                            <button class="ui inverted orange button" :disabled="dis[menu.id]===true" v-on:click="wishList(menu.id);dis[menu.id]=true">WISH</button>
+                                            <button class="ui inverted orange button" :disabled="dis[menu.id]===true" v-on:click="wishList(menu.id); dis[menu.id]=true">WISH</button>
                                             <!--<button class="ui pink basic button" :disabled="dis[menu.id]===true" v-on:click="wishList(menu.id);dis[menu.id]=true">WISH</button>-->
                                         </span>
                                     </div>
@@ -239,17 +243,29 @@
 </template>
 
 <style>
-.image{
+.save_button{
+    padding-right:15%;
+}
+.sidebar {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    float:right;
+    display:flex;
 }
 * {
     box-sizing: border-box;
 }
 .column {
-    float: left;
-    width: 25%;
-    padding: 3%;
+    /*float: left;*/
+    float:left;
+    width: 28%;
+    padding-left:3%;
+    padding-bottom: 3%;
+    /*padding-right:14%;*/
+    /*padding-right:2%;*/
+    display:flex;
 }
-
 /* Clearfix (clear floats) */
 .row::after {
     content: "";
@@ -257,10 +273,10 @@
     display: table;
 }
 .hide{
-display:none;
+    display:none;
 }
 /* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 200px) {
     .column {
         width: 100%;
     }
@@ -277,12 +293,10 @@ display:none;
     display: table;
     transition: opacity .3s ease;
 }
-
 .modal-wrapper {
     display: table-cell;
     vertical-align: middle;
 }
-
 .modal-container {
     width: 500px;
     margin: 0px auto;
@@ -293,19 +307,16 @@ display:none;
     transition: all .3s ease;
     font-family: Helvetica, Arial, sans-serif;
 }
-
 .modal-header h3 {
     margin-top: 0;
     color: #42b983;
 }
-
 .modal-body {
     margin: 20px 0;
 }
 .modal-footer{
     margin-left: 300px;
 }
-
 .modal-default-button {
     float: right;
 }
@@ -317,15 +328,12 @@ display:none;
  * You can easily play with the modal transition by editing
  * these styles.
  */
-
 .modal-enter {
     opacity: 0;
 }
-
 .modal-leave-active {
     opacity: 0;
 }
-
 .modal-enter .modal-container,
 .modal-leave-active .modal-container {
     -webkit-transform: scale(1.1);
@@ -435,7 +443,7 @@ Vue.use(VueAxios, axios)
         created (){
             //this.fetchData(this.ingredient)
             axios
-                .get('http://api.yummly.com/v1/api/recipes?_app_id=b4c8cd6d&_app_key=28dbb92e37821d78714d98ca2e442545&q='+'onion+soup'+'&maxResult=8&start=1'
+                .get('http://api.yummly.com/v1/api/recipes?_app_id=b4c8cd6d&_app_key=28dbb92e37821d78714d98ca2e442545&q='+'onion+soup'+'&maxResult=33&start=1'
                 )
                 .then(response => {(this.info = response)}) 
                 .catch((err) => {
@@ -470,7 +478,7 @@ Vue.use(VueAxios, axios)
                 +'&nutrition.FIBTG.min='+this.fiber_min+'&nutrition.FIBTG.max='+this.fiber_max
                 +'&nutrition.PROCNT.min='+this.protein_min+'&nutrition.PROCNT.max='+this.protein_max
                 +'&nutrition.NA.min='+this.sodium_min+'&nutrition.NA.max='+this.sodium_max
-                +'&maxResult=32&start=1'
+                +'&maxResult=33&start=1'
                 )
                 .then(response => {(this.info = response);
                 console.log(this.info_2.data.matches);
@@ -633,4 +641,3 @@ Vue.use(VueAxios, axios)
         }
     }
 </script>
-

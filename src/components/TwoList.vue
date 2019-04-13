@@ -1,20 +1,22 @@
 <template>
-<div style="margin-left:6%; margin-top:5%">
+<div style="background-color:#FFFAF0;">
+<br/>
+<div style="margin-left:10%;">
     <div class="row">
         <div class="column">
             <ul v-for="img of this.info1.data.images" v-bind:key= img.id>
-                <img class='image' :src='img.imageUrlsBySize["360"]'  style="width:50%"/>
+                <img class="ui medium rounded image" id='image' :src='img.imageUrlsBySize["360"]'  style="width:60%"/>
             </ul>
-            <h1>{{info1.data.name}}</h1>
-            <h1>Cook Time</h1>
+            <h1 class="double">{{info1.data.name}}</h1>
+            <h1 class="dashed">Cooking Time</h1>
             <ul>{{info1.data.totalTime}}<br/></ul>
-            <h1>Ingredient</h1>
+            <h1 class="dashed">Ingredient</h1>
             <ul>
                 <div v-for="ingre of info1.data.ingredientLines" v-bind:key= ingre.id>
                 <p>{{ingre}}</p>
                 </div>
             </ul>
-            <h1>Nutrition</h1>
+            <h1 class="dashed">Nutrition</h1>
             <ul>
             <div v-for="nutri of info1.data.nutritionEstimates" v-bind:key="nutri.id">
                 <div v-if="nutri.attribute === 'PROCNT'">
@@ -41,14 +43,14 @@
                 <div v-if="nutri.attribute === 'FIBTG'">
                     Fiber = {{fiber1 = nutri.value}}   {{nutri.unit.pluralAbbreviation}}
                 </div>
-            </div><br/>
+            </div></ul><br/>
             {{set1(protein1,carb1,sodium1,energy1,fat1,choles1,sugar1,fiber1)}}
             <div v-for="nutrition in nutritions" v-bind:key="nutrition">
                 <div class="lang">{{nutrition.name}}</div>
                 <div class="bar">
                 <div class="progress" v-bind:style = "{'background':nutrition.color, 'width':nutrition.percent+'%'}"></div>
                 </div>
-            </div>
+            </div><br/><br/>
             <!--
             <div class="foo proteinRatio">Protein</div>
             <div class="foo carbRatio">Carbohydrate</div>
@@ -58,24 +60,23 @@
             <div class="foo cholesRatio">Cholesterol</div>
             <div class="foo fatRatio">Fat</div>
             <div class="foo fiberRatio">Fiber</div>-->
-            </ul>
-            <h1>Direction</h1>
-            <ul><p>{{info1.data.source.sourceRecipeUrl}}</p></ul>
+            <button class="ui teal button"  style="width:75%; height:25%;" v-on:click="gotoDirection(info1.data.source.sourceRecipeUrl)">Read   Direction</button>
+            <br/><br/>
         </div>
         <div class="column">
             <ul v-for="img of this.info2.data.images" v-bind:key=img.id>
-                <img class='image' :src='img.imageUrlsBySize["360"]'  style="width:50%"/>
+                <img class="ui medium rounded image" id='image' :src='img.imageUrlsBySize["360"]'  style="width:60%"/>
             </ul>
-            <h1>{{info2.data.name}}</h1>
-            <h1>Cook Time</h1>
+            <h1 class="double">{{info2.data.name}}</h1>
+            <h1 class="dashed">Cooking Time</h1>
             <ul>{{info2.data.totalTime}}<br/></ul>
-            <h1>Ingredient</h1>
+            <h1 class="dashed">Ingredient</h1>
             <ul>
                 <div v-for="ingre of info2.data.ingredientLines" v-bind:key= ingre.id>
                 <p>{{ingre}}</p>
                 </div>
             </ul>
-            <h1>Nutrition</h1>
+            <h1 class="dashed">Nutrition</h1>
             <ul>
             <div v-for="nutri of info2.data.nutritionEstimates" v-bind:key="nutri.id">
                 <div v-if="nutri.attribute === 'PROCNT'">
@@ -102,7 +103,7 @@
                 <div v-if="nutri.attribute === 'FIBTG'">
                     Fiber = {{fiber2 = nutri.value}}   {{nutri.unit.pluralAbbreviation}}
                 </div>
-            </div><br/>
+            </div></ul><br/>
             {{set2(protein2,carb2,sodium2,energy2,fat2,choles2,sugar2,fiber2)}}
             <div v-for="nutrition2 in nutritions2" v-bind:key="nutrition2">
                 <div class="lang">{{nutrition2.name}}</div>
@@ -110,6 +111,7 @@
                 <div class="progress" v-bind:style = "{'background':nutrition2.color, 'width':nutrition2.percent+'%'}"></div>
                 </div>
             </div>
+            <br/><br/>
             <!--
             <div class="foo proteinRatiob">Protein</div>
             <div class="foo carbRatiob">Carbohydrate</div>
@@ -119,16 +121,31 @@
             <div class="foo cholesRatiob">Cholesterol</div>
             <div class="foo fatRatiob">Fat</div>
             <div class="foo fiberRatiob">Fiber</div>-->
-            </ul>
-            <h1>Direction</h1>
-            <ul><p>{{info2.data.source.sourceRecipeUrl}}</p></ul>
+            <button class="ui teal button" style="width:75%; height:25%;" v-on:click="gotoDirection(info2.data.source.sourceRecipeUrl)">Read   Direction</button>
+            <br/><br/><br/><br/>
         </div>
     </div>
+</div>
 </div>
 </template>
 <style>
 * {
     box-sizing: border-box;
+}
+h1.dashed {
+    /*border-style: double;
+    border-width: 1x;*/
+    border-style: ridge;
+    width:75%;
+    height:20%;
+    text-align: center;
+}
+h1.double {
+    border-style: double;
+    border-width: 15px;
+    width:75%;
+    height:25%;
+    text-align: center;
 }
 .percent{
     float:right;
@@ -344,6 +361,9 @@ Vue.use(VueAxios, axios)
                 this.nutritions2[5].percent = choles;
                 this.nutritions2[6].percent = sugar;
                 this.nutritions2[7].percent = fiber;
+            },
+            gotoDirection:function(a){
+                window.open(a, "_blank");
             }
         }
     }
