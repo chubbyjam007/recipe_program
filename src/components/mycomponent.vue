@@ -97,9 +97,9 @@
         <div class="sidebar">
         <div class="ui vertical menu">
             <div class="item">
-                <div class="header">Fillter & Nutrition unit</div>
+                <div class="header">Filter & Nutrition unit</div>
                 <div class="menu">
-                    <a class="item" id="show-modal" @click="showModal = true">Fillter</a>
+                    <a class="item" id="show-modal" @click="showModal = true">Filter</a>
                 </div>
             </div>
             <div class="item">
@@ -443,7 +443,7 @@ Vue.use(VueAxios, axios)
         created (){
             //this.fetchData(this.ingredient)
             axios
-                .get('http://api.yummly.com/v1/api/recipes?_app_id=b4c8cd6d&_app_key=28dbb92e37821d78714d98ca2e442545&q='+'onion+soup'+'&maxResult=33&start=1'
+                .get('http://api.yummly.com/v1/api/recipes?_app_id=b4c8cd6d&_app_key=28dbb92e37821d78714d98ca2e442545&q='+'flour'+'&maxResult=33&start=1'
                 )
                 .then(response => {(this.info = response)}) 
                 .catch((err) => {
